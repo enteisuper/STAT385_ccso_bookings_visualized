@@ -1,0 +1,23 @@
+---
+title: "STAT 385 Homework Assignment 07"
+author: ""
+date: "Due by 12:00 PM noon CST on 05/01/2021"
+output: html_document
+---
+
+Submit a final project proposal and a storyboard. See Chapter 1 of Knaflic's **Storytelling with Data** for ideas on creating a storyboard. The proposal should include the following information:
+
+- the name and roles of all of the group members
+
+- tentative title of the project
+
+- the dataset
+
+- summary of the intentions and goals of the project
+
+- storyboard
+
+![](HW7.png)
+
+![Source: C. Knaflic "Storytelling with Data" Fig .1.2](https://images.squarespace-cdn.com/content/v1/55b6a6dce4b089e11621d3ed/1438044490055-IG4LZKSNKGSK0WR4GQ4H/ke17ZwdGBToddI8pDm48kPkGIJ0pruoX1Hv5b0ppp19Zw-zPPgdn4jUwVcJE1ZvWQUxwkmyExglNqGp0IvTJZUJFbgE-7XRK3dMEBRBhUpyh1l-WACAhGTW-11RyWaBhw8BloYO8L0qS70u3-sw3G3TLbp6LwElf4Ix-NzEzIXU/image-asset.jpeg?format=1500w)
+
