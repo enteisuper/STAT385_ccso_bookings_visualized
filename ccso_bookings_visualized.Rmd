@@ -1,7 +1,7 @@
 ---
-title: "STAT 385 Homework Assignment 07"
+title: "STAT 385 Final Project"
 author: ""
-date: "Due by 12:00 PM noon CST on 05/01/2021"
+date: "Due by 12:00 PM noon CST on 05/14/2021"
 output: html_document
 ---
 
@@ -18,237 +18,31 @@ Submit a final project proposal and a storyboard. See Chapter 1 of Knaflic's **S
 - storyboard
 
 
-![Source: C. Knaflic "Storytelling with Data" Fig .1.2](https://images.squarespace-cdn.com/content/v1/55b6a6dce4b089e11621d3ed/1438044490055-IG4LZKSNKGSK0WR4GQ4H/ke17ZwdGBToddI8pDm48kPkGIJ0pruoX1Hv5b0ppp19Zw-zPPgdn4jUwVcJE1ZvWQUxwkmyExglNqGp0IvTJZUJFbgE-7XRK3dMEBRBhUpyh1l-WACAhGTW-11RyWaBhw8BloYO8L0qS70u3-sw3G3TLbp6LwElf4Ix-NzEzIXU/image-asset.jpeg?format=1500w)
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-
-
-## We're going to build Shiny apps!!!
-
-Run the Rmd file for the notes on your local computer to interact with the Shiny app.
-
-```{r, echo=FALSE}
-#
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
-library(shiny)
-# Define UI for application that draws a histogram
-ui <- fluidPage(
-  
-    # Sidebar with a slider input for number of bins 
-      sliderInput(inputId = "bins",
-                        label = "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30), #the comma is important
-      
-    # Show a plot of the generated distribution
-      plotOutput("distPlot")
-      )
-# Define server logic required to draw a histogram
-server <- function(input, output) {
-    output$distPlot <- renderPlot({
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white', 
-             xlab = "waiting time (in minutes)", 
-             main = "Histogram of waiting times")
-  })
-}
-# Run the application 
-shinyApp(ui = ui, server = server, options = list(height = 500))
-```
-
-## What are shiny apps? Why should we use them?
-
-These are free, easy-to-use, almost-easy-to-create, interactive data products. Shiny apps represent digestible content for anyone to learn about statistics and data through direct manupulation of the data values. The nice thing is that the app is **reactive** and changes with every confirmed change the user (of the app) makes.
-
-
-## How to build a Shiny app? 
-
-There are some basic functions and syntax that is common to all shiny apps, while other functions and tasks will be specific to the type of data product you want to show.
-
-**Please watch Parts 1-3 of the [Shiny app tutorial](https://shiny.rstudio.com/tutorial/) by RStudio to learn more on your own.** The following notes are from Garrett Grolemund's video and slides https://github.com/rstudio-education/shiny.rstudio.com-tutorial.
-
-Let's begin by looking at the coding for the above watered down version of the Faithful app (the template is in RStudio already).
-
-```{r, eval=FALSE}
-#
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
-library(shiny)
-# Define UI for application that draws a histogram
-ui <- fluidPage(
-  
-    # Sidebar with a slider input for number of bins 
-      sliderInput(inputId = "bins",
-                        label = "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30), #the comma is important
-      
-    # Show a plot of the generated distribution
-      plotOutput("distPlot")
-      )
-# Define server logic required to draw a histogram
-server <- function(input, output) {
-    output$distPlot <- renderPlot({
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white', 
-             xlab = "waiting time (in minutes)", 
-             main = "Histogram of waiting times")
-    })
-}
-# Run the application 
-shinyApp(ui = ui, server = server)
-```
-
-
-Every Shiny app must have 3 components:  
-1. **ui** or user interface  
-2. **server** function (followed by grouped expression`{}`)  
-3. **shinyApp** function
-
-### ui
-
-The user interface contains code that builds the web document by creating html code for the app. This ui object contains the `fluidPage()` function which contains all the "layers" of the design of the app. The app will need **input** and **output** designs.
-
-There are several **input** designs:  
-
-- buttons `actionButton()` or `submitButton()`
-
-- single or group checkboxes `checkboxInput()` or `checkboxGroupInput()` 
-
-- date input `dateInput()` or range `dateRangeInput()`  
-
-- file input `fileInput()`  
-
-- numeric input `numericInput()` 
-
-- text input `textInput()` 
-
-- radio buttons `radioButtons()`   
-
-- select box (i.e. dropdown menu) `selectInput()`
-
-- sliders `sliderInput()`   
-
-For these input designs we need an `inputId` for identifying the input (and for use with the server function) and a `label` or explanation of the input type. Users will read this label.
-
-There are several **output** designs:
-
-- interactive table `dataTableOutput()`
-
-- raw html `htmlOutput()`
-
-- image `imageOutput()`
-
-- plot `plotOutput()`
-
-- table `tableOutput()`
-
-- text `textOutput()` or `verbatimTextOutput()`
-
-- a Shiny UI element `uiOutput()`
-
-For these output designs, we need an `outputId`. None of the fluidPage arguments will create any meaningful output for us to see. It does create html for the page.
-
-
-### server(){}
-
-The `server()` function is the R code (that we're used to) giving instructions for the inputs and outputs. The `server()` function creates/builds/re-builds the **output** of the app such as the plot, table, and text by first recognizing the **input** (the data values). The `server()` function must have both **input** and **output**.
-
-The **input** in the `server()` function must be named as `input$`* where the asterisk represents the naming of the object which should match the `inputId` (created in the ui portion of the code). the input is a list.
-
-If building an **output** object, it needs to be saved as `output$`* where the asterisk represents the naming of the object which should match the `outputId` (created in the ui portion of the code). The output is a list.
-
-To display the output object, we use the `render*()` function, where the asterisk is a particular type of render function. Usually the `render*()` function has a corresponding output type (see ui above).
-
-- interactive table `renderDataTable()`
-
-- image `renderImage()`
-
-- plot `renderPlot()`
-
-- a code block `renderPrint()`
-
-- table `renderTable()`
-
-- character string `renderText()`
-
-- a shiny UI element `renderUI()`
-
-
-#### Reactivity
-
-When a user changes an input value in the app and the app output changes as a result, that is called **reactivity**.
-
-If we want the **output** (histogram in the above app) to change after the user changes the **input** (slider in the above app), then we need to use the `input$`* matching the Id of the input in the ui and that input must go inside the `render*()` function. *If we do this correctly, then the reactivity occurs automatically!*
-
-**Reactive values** (i.e. the `input$`) work together with **reactive functions.** 
-
-
-### shinyApp()
-
-The `shinyApp()` function serves as the "knitting" function to weave together the ui and `server()` function. This function creates the app which is running locally on your computer.
-
-
-### Task to Do
-
-Here are more examples of Shiny apps:  
-- https://shiny.rstudio.com/gallery/kmeans-example.html  
-- https://shiny.rstudio.com/gallery/faithful.html  
-- https://shiny.rstudio.com/gallery/movie-explorer.html  
-
-1. Using Shiny, make a histogram with the `faithful` data (which is already inside of R). Allow the user to change the number of observations for the eruptions column.
-
-2. Using Shiny, make a scatter plot with the `faithful` data (which is already inside of R). Allow the user to change the number of observations for both x (eruptions) and y (waiting) variables.
-
-
-
-### Another example (bare bones)
-
-This is a shiny app for visualizing the cars dataset in base R. It shows how to integrate a few control widgets with ggplot functionality. This data analysis is not that interesting, but it is a start! 
-
-```{r, echo=FALSE}
+```{r}
 library(tidyverse)
 library(ggplot2)
 data(mtcars)
+dat <- mtcars %>% dplyr::select(mpg, cyl, disp) %>% 
+  rename(Cylinder = cyl) %>%
+  mutate(Cylinder = as.factor(Cylinder)) 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
   titlePanel("Cars data visualization"),
+  
+  tags$p("Visualization of car power vs efficiency across cylinder types."),
   
   sidebarPanel(
     
     checkboxGroupInput("checkGroup", 
       h3("Cylinders"), choices = list("4" = 4, 
       "6" = 6, "8" = 8), selected = 6),
-    
     sliderInput("slider_mpg", h3("mpg"),
       min = floor(min(mtcars$mpg)), max = ceiling(max(mtcars$mpg)), 
         value = c(15, 27)),
-    
-    sliderInput("slider_dist", h3("disp"),
+    sliderInput("slider_disp", h3("disp"),
       min = floor(min(mtcars$disp)), max = ceiling(max(mtcars$disp)), 
-        value = c(150, 350))
+        value = c(150, 350)), 
+    width = 3
   ),
     
   mainPanel( 
@@ -258,71 +52,60 @@ ui <- fluidPage(
 )
 # Define server logic required to draw a ggplot
 server <- function(input, output) {
-  
     output$Plot <- renderPlot({
         # generate bins based on input$bins from ui.R
-        dat <- mtcars %>% select(mpg, cyl, disp) %>% 
+        dat <- dat %>% 
           filter(input$slider_mpg[1] < mpg & mpg < input$slider_mpg[2]) %>%
-          filter(input$slider_dist[1] < disp & disp < input$slider_dist[2]) %>%
-          filter(cyl %in% input$checkGroup)
-        ggplot(dat, aes(x = mpg, y = disp)) + 
-          geom_point(pch = 19, color = 
-                       dat$cyl[dat$cyl %in% input$checkGroup]) + 
+          filter(input$slider_disp[1] < disp & disp < input$slider_disp[2]) %>%
+          filter(Cylinder %in% input$checkGroup)
+        ggplot(dat, aes(x = mpg, y = disp, 
+          group = Cylinder, color = Cylinder)) + 
+          geom_point(pch = 19, cex = 3) + 
           theme_minimal() + 
-          labs(x="miles per gallon (mpg)", y="displacement (cubic inches)")
+          scale_color_manual(
+            values =  c("4"="blue",
+                "6"="orange",
+                "8"="black")) + 
+          labs(x="Miles per gallon (mpg)", y="Displacement (cubic inches)")
   })
 }
 # Run the app
-shinyApp(ui = ui, server = server)
+shinyApp(ui = ui, server = server,options = list(height = 600))
 ```
 
 
-Here are more examples of Shiny apps:  
-- https://shiny.rstudio.com/gallery/kmeans-example.html  
-- https://shiny.rstudio.com/gallery/faithful.html  
-- https://shiny.rstudio.com/gallery/movie-explorer.html  
-- My baseball research: https://deck13.shinyapps.io/challenging_baseball_nostalgia/
 
+#### Continuing on
 
-***
-
-## We're still building Shiny apps!!!
-
- - Run the Rmd file for the notes on your local computer to interact with the Shiny app.
- 
- - We will discuss reactivity in detail.
-
- - **Please watch Parts 1-3 of the [Shiny app tutorial](https://shiny.rstudio.com/tutorial/) by RStudio to learn more on your own.** The following notes are from Garrett Grolemund's video and slides https://github.com/rstudio-education/shiny.rstudio.com-tutorial.
- 
-
-### Answers to the Task to Do from Tuesday's lecture
-
-1. Using Shiny, make a histogram with the `faithful` data (which is already inside of R). Allow the user to change the number of observations for the eruptions column. **See code in .Rmd file**
-
-```{r, echo = FALSE, eval = FALSE}
+```{r}
+# Define UI for application that draws a histogram
 ui <- fluidPage(
-  
-  # Sidebar with a slider input for number of bins 
-  sliderInput(inputId = "dat",
-              label = "Number of observations:",
-              min = 1,
-              max = nrow(faithful),
-              value = 10), #the comma is important
-  
-  # Show a plot of the generated distribution
-  plotOutput(outputId = "distPlot")
+    
+  tabsetPanel(
+    
+    tabPanel("SliderInput",
+    # Sidebar with a slider input for number of bins 
+      sliderInput(inputId = "bins",
+                        label = "Number of bins:",
+                        min = 1,
+                        max = 50,
+                        value = 30)
+   ),  #the comma is important
+   
+    tabPanel("HistogramOutput",
+    # Show a plot of the generated distribution
+      plotOutput("distPlot")
+      )
+  )
 )
 # Define server logic required to draw a histogram
 server <- function(input, output) {
-  
-  output$distPlot <- renderPlot({
-    # generate bins based on input$bins from ui.R
-    x    <- faithful[1:input$dat, 1]
-    #bins <- seq(min(x), max(x), length.out = input$bins + 1)
-    
-    # draw the histogram with the specified number of bins
-    hist(x, col = 'darkgray', border = 'white', 
-         main="Histogram of Old Faithful Eruption Times")
+    output$distPlot <- renderPlot({
+        # generate bins based on input$bins from ui.R
+        x    <- faithful[, 2]
+        bins <- seq(min(x), max(x), length.out = input$bins + 1)
+        # draw the histogram with the specified number of bins
+        hist(x, breaks = bins, col = 'darkgray', border = 'white')
   })
 }
 # Run the application 
@@ -330,69 +113,35 @@ shinyApp(ui = ui, server = server, options = list(height = 500))
 ```
 
 
-2. Using Shiny, make a scatter plot with the `faithful` data (which is already inside of R). Allow the user to change the number of observations for both x (eruptions) and y (waiting) variables.  **See code in .Rmd file**
-
-```{r, echo = FALSE, eval = FALSE}
-#NOT SO NICE!
+```{r}
+# Define UI for application that draws a histogram
 ui <- fluidPage(
-  
-  # Sidebar with a slider input for number of bins 
-  sliderInput(inputId = "datx",
-              label = "Observations for Eruption times:",
-              min = 1,
-              max = nrow(faithful),
-              value = 10), #the comma is important
-  
-  sliderInput(inputId = "daty",
-              label = "Observations for Waiting times until next eruption:",
-              min = 1,
-              max = nrow(faithful),
-              value = 10), #the comma is important
-  
-  # Show a plot of the generated distribution
-  plotOutput(outputId = "scatPlot")
+    
+  navlistPanel(
+    
+    tabPanel("SliderInput",
+    # Sidebar with a slider input for number of bins 
+      sliderInput(inputId = "bins",
+                        label = "Number of bins:",
+                        min = 1,
+                        max = 50,
+                        value = 30)
+   ),  #the comma is important
+   
+    tabPanel("HistogramOutput",
+    # Show a plot of the generated distribution
+      plotOutput("distPlot")
+      )
+  )
 )
 # Define server logic required to draw a histogram
 server <- function(input, output) {
-  
-  output$scatPlot <- renderPlot({
-    # generate bins based on input$bins from ui.R
-    x    <- faithful[1:input$datx, 1]
-    y    <- faithful[1:input$daty, 2]
-    
-    # draw the scatter plot
-    plot(x, y, col = 'darkgray', xlab="eruption time in minutes", ylab="waiting time in minutes", pch=16, main="Old Faithful Geyser Data")
-  })
-}
-# Run the application 
-shinyApp(ui = ui, server = server, options = list(height = 800))
-```
-
-
-```{r, echo = FALSE, eval = FALSE}
-#NICER
-ui <- fluidPage(
-  
-  # Sidebar with a slider input for number of bins 
-  sliderInput(inputId = "datx",
-              label = "Number of observations:",
-              min = 1,
-              max = nrow(faithful),
-              value = 10), #the comma is important
-  
-  # Show a plot of the generated distribution
-  plotOutput(outputId = "scatPlot")
-)
-# Define server logic required to draw a histogram
-server <- function(input, output) {
-  
-  output$scatPlot <- renderPlot({
-    # generate bins based on input$bins from ui.R
-    x    <- faithful[1:input$datx, 1]
-    y    <- faithful[1:input$datx, 2]
-    
-    # draw the scatter plot
-    plot(x, y, col = 'darkgray', xlab="eruption time in minutes", ylab="waiting time in minutes", pch=16, main="Old Faithful Geyser Data")
+    output$distPlot <- renderPlot({
+        # generate bins based on input$bins from ui.R
+        x    <- faithful[, 2]
+        bins <- seq(min(x), max(x), length.out = input$bins + 1)
+        # draw the histogram with the specified number of bins
+        hist(x, breaks = bins, col = 'darkgray', border = 'white')
   })
 }
 # Run the application 
@@ -400,52 +149,34 @@ shinyApp(ui = ui, server = server, options = list(height = 500))
 ```
 
 
-
-
-***
-
-## We introduced reactivity last time
-
-When a user changes an input value in the app and the app output changes as a result, that is called **reactivity**.
-
-If we want the **output** (histogram in the above app) to change after the user changes the **input** (slider in the above app), then we need to use the `input$`* matching the Id of the input in the ui and that input must go insde the `render*()` function. *If we do this correctly, then the reactivity occurs automatically!*
-
-**Reactive values** (i.e. the `input$`) work together with **reactive functions.** 
-
-
-
-## More on Reactive Tools for Shiny
-
-- **Reactive values** *notify* (that changes are taking place)
-
-- **Reactive functions** *respond* (to the changes)
-
-- When we use `input$`, we are creating an input list that contains reactive values.
-
-- There are 6 frequently used **reactive tools** that each build object(s) that will *respond* to changes in a set if reactive values (`input$`)
-
-We will now cover these reactive tools
-
-1. `render*()` **render reactive output**
-
-    - builds an object that is tied to specific type of output
-
 ```{r}
-ui <- fluidPage(
-  
-  # Sidebar with a slider input for number of bins 
-  textInput(inputId = "question",
-              label = "Please write your thoughts here:"
-              ), #the comma is important
-  
-  # Show a plot of the generated distribution
-  verbatimTextOutput(outputId = "answer")
+# Define UI for application that draws a histogram
+ui <- #fluidPage( #we replace fluidPage with navbarPage
+    
+  navbarPage("A Simple App",
+    
+    tabPanel("Slider Input",
+    # Sidebar with a slider input for number of bins 
+      sliderInput(inputId = "bins",
+                        label = "Number of bins:",
+                        min = 1,
+                        max = 50,
+                        value = 30)
+   ),  #the comma is important
+   
+    tabPanel("Histogram Output",
+    # Show a plot of the generated distribution
+      plotOutput("distPlot")
+      )
 )
 # Define server logic required to draw a histogram
 server <- function(input, output) {
-  
-  output$answer <- renderPrint({
-    print(input$question)
+    output$distPlot <- renderPlot({
+        # generate bins based on input$bins from ui.R
+        x    <- faithful[, 2]
+        bins <- seq(min(x), max(x), length.out = input$bins + 1)
+        # draw the histogram with the specified number of bins
+        hist(x, breaks = bins, col = 'darkgray', border = 'white')
   })
 }
 # Run the application 
@@ -453,230 +184,38 @@ shinyApp(ui = ui, server = server, options = list(height = 500))
 ```
 
 
-
-2. `reactive()` **modify reactions**
-
-    - builds a reactive object called a "reactive expression" which acts like a new function. [Here](https://stackoverflow.com/questions/39436713/r-shiny-reactivevalues-vs-reactive) is a more nuanced discussion on the differences between reactive and simple reactivity.
-    
 ```{r}
-ui <- fluidPage(
-  
-  # Sidebar with a slider input for number of bins 
-  sliderInput(inputId = "size",
-              label = "Number of observations:",
-              min = 1,
-              max = 1e3,
-              value = 10), #the comma is important
-  
-  # Show a plot of the generated distribution
-  plotOutput(outputId = "scatPlot")
+# Define UI for application that draws a histogram
+ui <- fluidPage( 
+    
+  sidebarLayout(
+    
+    sidebarPanel("Slider Input",
+    # Sidebar with a slider input for number of bins 
+      sliderInput(inputId = "bins",
+                        label = "Number of bins:",
+                        min = 1,
+                        max = 50,
+                        value = 30)
+   ),  #the comma is important
+   
+    mainPanel("HistogramOutput",
+    # Show a plot of the generated distribution
+      plotOutput("distPlot")
+      )
+  )
 )
 # Define server logic required to draw a histogram
 server <- function(input, output) {
-  # generate bins based on input$bins from ui.R
-  dat <- reactive({
-    rnorm(input$size)
-  })
-    
-  output$scatPlot <- renderPlot({
-    # draw the scatter plot
-    plot(cbind(dat(),dat()), col = 'darkgray', pch=16, 
-         main="Normally Distributed Data", xlab = "x", ylab = "y")
+    output$distPlot <- renderPlot({
+        # generate bins based on input$bins from ui.R
+        x    <- faithful[, 2]
+        bins <- seq(min(x), max(x), length.out = input$bins + 1)
+        # draw the histogram with the specified number of bins
+        hist(x, breaks = bins, col = 'darkgray', border = 'white')
   })
 }
 # Run the application 
 shinyApp(ui = ui, server = server, options = list(height = 500))
 ```
-
-    
-3. `isolate()` **prevent reactions**
-
-    - sets something to be a non-reactive value thus preventing values from being up-to-date
-
-```{r}
-ui <- fluidPage(
- sliderInput(inputId = "num",
-  label = "Choose a number",
-  min = 1, 
-  max = 100,
-  value = 25),
- 
- textInput(inputId = "title",
-  label = "Write a title",
-  value = "Scatter Plot of Random Normal Values"),
- 
- plotOutput("scat")
-)
-server <- function(input, output) {
- output$scat <- renderPlot({
-  plot(x=rnorm(input$num),y=rnorm(input$num), 
-       main = isolate({input$title}), xlab = "x", ylab = "y")
- })
-}
-shinyApp(ui = ui, server = server, options = list(height = 800))
-```
-
-
-4. `observeEvent()` **trigger code**
-
-    - defines reactive values such that they trigger other code to run
-
-```{r}
-ui <- fluidPage(
- 
- textInput(inputId = "selection",
-  label = "Pick any number between 1 and 100"),
- 
- actionButton(inputId = "clicks",
- label = "Select"),
- 
- verbatimTextOutput(outputId = "pc")
-)
-server <- function(input, output) {
-  observeEvent(input$clicks, {
-                output$pc <- renderPrint({ 
-                  print(paste("the Computer was thinking of the number", sample(1:100,1)))
-     })
-   })
-}
-shinyApp(ui = ui, server = server, options = list(height = 500))
-```
-
-    
-5. `eventReactive()` **delay reactions**
-
-    - a reactive expression that only responds to specific events thus delaying reactivity. [Here](https://stackoverflow.com/questions/33519816/shiny-what-is-the-difference-between-observeevent-and-eventreactive) is a more nuanced discussion on the differences between `observeEvent()` and `eventReactive()`. 
-
-```{r}
-ui <- fluidPage(
- 
- textInput(inputId = "selection",
-  label = "Pick any number between 1 and 100"),
- 
- actionButton(inputId = "clicks", 
-  label = "Select"),
- 
- verbatimTextOutput(outputId = "pc")
-)
-server <- function(input, output) {
-  change <- eventReactive(input$clicks, { 
-    input$selection })
-  
-  output$pc <- renderPrint({ 
-    print(paste("the Computer was thinking of the number", sample(1:change(),1)))
-  })
-}
-shinyApp(ui = ui, server = server, options = list(height = 500))
-```
-
-
-6. `reactiveValue()`  **create your own reactive values**
-
-    - creates a list of reactive values to manipulate
-
-```{r}
-library(tidyverse)
-mpg2 <- filter(mpg, manufacturer %in% c("chevrolet", "dodge", "ford", 
-  "jeep", "lincoln", "mercury", "pontiac"))
-ui <- fluidPage(
- actionButton(inputId = "cyli", label = "Cylinders"),
- 
- actionButton(inputId = "driv", label = "Drivetrain"),
- plotOutput("bars")
-)
-server <- function(input, output) {
- rv <- reactiveValues(data = mpg2)
- 
-  observeEvent(input$cyli, { rv$data <- table(mpg2$cyl) })
- 
-  observeEvent(input$driv, { rv$data <- table(mpg2$drv) })
- 
-  output$bars <- renderPlot({ 
-    barplot(rv$data, border="white", horiz = TRUE, xlab="frequency") 
-  })
-}
-shinyApp(ui = ui, server = server, options = list(height = 600))
-```
-
-
-## Tasks to Do
-
-1. Create a magic 8 ball Shiny app. The user must ask yes or no questions. The 8 ball responds with one of 20 possible answers. See https://en.wikipedia.org/wiki/Magic_8-Ball for the possible answers. 
-
-
-2. Add an image of the 8 ball to the shiny app in part 1.
-
-
-```{r}
-answers <- c("It is certain.", "It is decidedly so.","Without a doubt.",
-             "Yes - definitely.","You may rely on it.","As I see it, yes.",
-             "Most likely.","Outlook good.","Yes.","Signs point to yes.",
-             "Reply hazy, try again.","Ask again later.","Better not tell you now.",
-             "Cannot predict now.","Concentrate and ask again.","Don't count on it.",
-             "My reply is no.","My sources say no.","Outlook not so good.",
-             "Very doubtful.")
-ui <- fluidPage(
-  
-  # Sidebar with a slider input for number of bins 
-  textInput(inputId = "question",
-              label = "Ask a yes-no question:"
-              ), 
-  
-  actionButton(inputId = "submit", label = "Submit"),
-  
-  # Show a plot of the generated distribution
-  #verbatimTextOutput(outputId = "answer")
-  span(textOutput("answer"), style="color:blue")
-)
-# Define server logic required to draw a histogram
-server <- function(input, output) {
-  
-  observeEvent(input$submit, {
-    output$answer <- renderPrint({
-      sample(answers, size = 1)
-    })
-  })
-}
-# Run the application 
-shinyApp(ui = ui, server = server, options = list(height = 500))
-```
-
-
-3. There's something not quite right about the following Shiny app and its code. Fix it.
-
-```{r}
-library(shiny)
-ui <- fluidPage(
-  
-  # Sidebar with a slider input for number of bins 
-  sliderInput(inputId = "size",
-              label = "Number of observations:",
-              min = 1,
-              max = 1e6,
-              value = 30), #the comma is important
-  
-  # Show a plot of the generated distribution
-  plotOutput(outputId = "histPlot"),
-  verbatimTextOutput(outputId = "sumtable")
-)
-# Define server logic required to draw a histogram
-server <- function(input, output) {
-  
-  output$histPlot <- renderPlot({
-    
-    # draw the histogram plot
-    hist(rnorm(input$size), col = 'darkgray', xlab="", main="Normal Distribution")
-  })
-  
-  output$sumtable <- renderPrint({
-    summary(rnorm(input$size))
-  })
-}
-# Run the application 
-shinyApp(ui = ui, server = server)
-```
-
-
-4. For the `reactiveValues()` example, add another button such that it plots a single bar plot for the counts of the levels of both factors (not stacked but side-by-side).
-
 
