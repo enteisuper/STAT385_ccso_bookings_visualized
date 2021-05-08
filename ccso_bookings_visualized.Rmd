@@ -25,28 +25,27 @@ library(tidyverse)
 library(ggplot2)
 
 ccso_bookings <- read.csv("https://uofi.box.com/shared/static/9elozjsg99bgcb7gb546wlfr3r2gc9b7.csv")
+ccso_bookings$RACE <- as.factor(ccso_bookings$RACE)
+ccso_bookings$MARITIAL.STATUS <- as.factor(ccso_bookings$MARITIAL.STATUS)
+ccso_bookings$SEX <- as.factor(ccso_bookings$SEX)
 
-data(mtcars)
-dat <- mtcars %>% dplyr::select(mpg, cyl, disp) %>% 
-  rename(Cylinder = cyl) %>%
-  mutate(Cylinder = as.factor(Cylinder)) 
+data(ccso_bookings)
+
 # Define UI for application that draws a histogram
 ui <- fluidPage(
-  titlePanel("Cars data visualization"),
-  
-  tags$p("Visualization of car power vs efficiency across cylinder types."),
+  titlePanel("Length of Time Spent in Champaign County Jails by Various Demographics"),
   
   sidebarPanel(
     
     checkboxGroupInput("checkGroup", 
-      h3("Cylinders"), choices = list("4" = 4, 
-      "6" = 6, "8" = 8), selected = 6),
-    sliderInput("slider_mpg", h3("mpg"),
-      min = floor(min(mtcars$mpg)), max = ceiling(max(mtcars$mpg)), 
-        value = c(15, 27)),
-    sliderInput("slider_disp", h3("disp"),
-      min = floor(min(mtcars$disp)), max = ceiling(max(mtcars$disp)), 
-        value = c(150, 350)), 
+      h3("Race"), choices = list("White" = "White", 
+      "Hispanic" = "Hispanic", "White (Hispanic)" = "White (Hispanic)", "Black" = "Black", "Asian/Pacific Islander" = "Asian/Pacific Islander", "Native American" = "Native American", "Unknonwn" = "Unknown")),
+    checkboxGroupInput("checkGroup", 
+      h3("Marital Status"), choices = list("Married" =  "Married", "Single" = "Single", "Seperated" = "Separated", "Significant Other", "Divorced" = "Divorced", "Widowed" = "Widowed", "Unknown" = "Unknown")),
+    checkboxGroupInput("checkGroup", 
+      h3("Sex"), choices = list("Female" =  "Female", "Male" = "Male")),
+    checkboxGroupInput("checkGroup", 
+      h3("City"), choices = list("Champaign" =  "Champaign", "Urbana" = "Urbana")),
     width = 3
   ),
     
@@ -223,5 +222,8 @@ server <- function(input, output) {
 # Run the application 
 shinyApp(ui = ui, server = server, options = list(height = 500))
 ```
+<<<<<<< Updated upstream
 
 12345 34
+=======
+>>>>>>> Stashed changes
