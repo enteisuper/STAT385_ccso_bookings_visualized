@@ -21,6 +21,9 @@ Submit a final project proposal and a storyboard. See Chapter 1 of Knaflic's **S
 ```{r}
 library(tidyverse)
 library(ggplot2)
+
+ccso_bookings <- read.csv("https://uofi.box.com/shared/static/9elozjsg99bgcb7gb546wlfr3r2gc9b7.csv")
+
 data(mtcars)
 dat <- mtcars %>% dplyr::select(mpg, cyl, disp) %>% 
   rename(Cylinder = cyl) %>%
