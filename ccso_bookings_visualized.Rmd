@@ -224,4 +224,4 @@ server <- function(input, output) {
 shinyApp(ui = ui, server = server, options = list(height = 500))
 ```
 
-12345
+12345 34
