@@ -5,6 +5,8 @@ date: "Due by 12:00 PM noon CST on 05/14/2021"
 output: html_document
 ---
 
+
+
 Submit a final project proposal and a storyboard. See Chapter 1 of Knaflic's **Storytelling with Data** for ideas on creating a storyboard. The proposal should include the following information:
 
 - the name and roles of all of the group members
