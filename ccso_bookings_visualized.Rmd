@@ -60,7 +60,7 @@ server <- function(input, output) {
             filter(Sex %in% input$checkSex) %>%
             filter(City %in% input$checkCity)
         ggplot(data = ccso_bookings) +
-            geom_point(mapping = aes(x = Booking.Date.Time, y = time.spent.in.jail), col = "lightblue", size = 1)
+            geom_point(mapping = aes(x = BookingDateTime, y = TimeSpentInJail), col = "lightblue", size = 1)
     })
 }
 # Run the app
