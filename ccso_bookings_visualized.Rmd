@@ -23,6 +23,7 @@ Submit a final project proposal and a storyboard. See Chapter 1 of Knaflic's **S
 ```{r}
 library(tidyverse)
 library(ggplot2)
+library(shiny)
 
 ccso_bookings <- read.csv("https://uofi.box.com/shared/static/9elozjsg99bgcb7gb546wlfr3r2gc9b7.csv")
 ccso_bookings$RACE <- as.factor(ccso_bookings$RACE)
