@@ -14,15 +14,19 @@ library(shiny)
 
 original <- read.csv("https://uofi.box.com/shared/static/9elozjsg99bgcb7gb546wlfr3r2gc9b7.csv")
 
-ccso_bookings = data %>% 
-    mutate(Booking.Date.Time = parse_datetime(Booking.Date.Time, format = "%m/%d/%y %H:%M:%S")) %>% 
-    filter(Release.Date.Time != "1/00/00 00:00:00") %>%
-    mutate(Release.Date.Time = parse_datetime(Release.Date.Time, format = "%m/%d/%y %H:%M:%S")) %>% 
-    mutate(time.spent.in.jail = as.numeric(difftime(Release.Date.Time, Booking.Date.Time, units = "hours"))) %>%
-    select(RACE, SEX, CITY, MARITIAL.STATUS, Booking.Date.Time, time.spent.in.jail) %>%
-    rename(Race = RACE, Sex = SEX, City = CITY, MaritalStatus = MARITIAL.STATUS, BookingDateTime = Booking.Date.Time, TimeSpentInJail = time.spent.in.jail) 
+ccso_bookings = original %>% 
+    #mutate(Booking.Date.Time = parse_datetime(Booking.Date.Time, format = "%m/%d/%y %H:%M:%S")) %>% 
+    #filter(Release.Date.Time != "1/00/00 00:00:00") %>%
+    #mutate(Release.Date.Time = parse_datetime(Release.Date.Time, format = "%m/%d/%y %H:%M:%S")) %>% 
+   # mutate(time.spent.in.jail = as.numeric(difftime(Release.Date.Time, Booking.Date.Time, units = "hours"))) %>%
+    select(RACE, SEX, CITY, MARITIAL.STATUS, Days.in.Jail) %>%
+    rename(Race = RACE, Sex = SEX, City = CITY, MaritalStatus = MARITIAL.STATUS)
+
 ccso_bookings$City[!is.na(str_extract(ccso_bookings$City, "^CHAM\\w*"))] = "CHAMPAIGN"
 ccso_bookings$City[!is.na(str_extract(ccso_bookings$City, "^U\\w*A"))] = "Urbana"
+
+ccso_bookings = ccso_bookings[dat$Days.in.Jail != "#VALUE!",]
+ccso_bookings$Days.in.Jail = as.numeric(ccso_bookings$Days.in.Jail)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -31,17 +35,16 @@ ui <- fluidPage(
     sidebarPanel(
         
         checkboxGroupInput("checkRace", 
-                           h3("Race"), choices = list("White" = "White", 
-                                                      "Hispanic" = "Hispanic", "White (Hispanic)" = "White (Hispanic)", "Black" = "Black", "Asian/Pacific Islander" = "Asian/Pacific Islander", "Native American" = "Native American", "Unknonwn" = "Unknown")),
+        h3("Race"), choices = list("White" = "White", "Hispanic" = "Hispanic", "White (Hispanic)" = "White (Hispanic)", "Black" = "Black", "Asian/Pacific Islander" = "Asian/Pacific Islander", "Native American" = "Native American", "Unknonwn" = "Unknown"), selected = "White"),
         
         checkboxGroupInput("checkMarital", 
-                           h3("MaritalStatus"), choices = list("Married" =  "Married", "Single" = "Single", "Seperated" = "Separated", "Significant Other", "Divorced" = "Divorced", "Widowed" = "Widowed", "Unknown" = "Unknown")),
+        h3("MaritalStatus"), choices = list("Married" =  "Married", "Single" = "Single", "Seperated" = "Separated", "Significant Other", "Divorced" = "Divorced", "Widowed" = "Widowed", "Unknown" = "Unknown"), selected = "Married"),
         
         checkboxGroupInput("checkSex", 
-                           h3("Sex"), choices = list("Female" =  "Female", "Male" = "Male")),
+        h3("Sex"), choices = list("Female" =  "Female", "Male" = "Male"), selected = "Female"),
         
         checkboxGroupInput("checkCity", 
-                           h3("City"), choices = list("Champaign" =  "Champaign", "Urbana" = "Urbana")),
+        h3("City"), choices = list("Champaign" =  "Champaign", "Urbana" = "Urbana"), selected = "Champaign"),
         width = 3
     ),
     
@@ -59,8 +62,11 @@ server <- function(input, output) {
             filter(MaritalStatus %in% input$checkMarital) %>%
             filter(Sex %in% input$checkSex) %>%
             filter(City %in% input$checkCity)
-        ggplot(data = ccso_bookings) +
-            geom_point(mapping = aes(x = BookingDateTime, y = TimeSpentInJail), col = "lightblue", size = 1)
+        
+        ggplot(data = dat) +
+          geom_histogram(aes(x = Days.in.Jail)) +
+          theme_minimal()
+            #geom_point(mapping = aes(x = BookingDateTime, y = TimeSpentInJail), col = "lightblue", size = 1)
     })
 }
 # Run the app
