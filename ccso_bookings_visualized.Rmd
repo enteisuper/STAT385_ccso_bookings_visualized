@@ -15,18 +15,12 @@ library(shiny)
 original <- read.csv("https://uofi.box.com/shared/static/9elozjsg99bgcb7gb546wlfr3r2gc9b7.csv")
 
 ccso_bookings = original %>% 
-    #mutate(Booking.Date.Time = parse_datetime(Booking.Date.Time, format = "%m/%d/%y %H:%M:%S")) %>% 
-    #filter(Release.Date.Time != "1/00/00 00:00:00") %>%
-    #mutate(Release.Date.Time = parse_datetime(Release.Date.Time, format = "%m/%d/%y %H:%M:%S")) %>% 
-   # mutate(time.spent.in.jail = as.numeric(difftime(Release.Date.Time, Booking.Date.Time, units = "hours"))) %>%
-    select(RACE, SEX, CITY, MARITIAL.STATUS, Days.in.Jail) %>%
-    rename(Race = RACE, Sex = SEX, City = CITY, MaritalStatus = MARITIAL.STATUS)
-
-ccso_bookings$City[!is.na(str_extract(ccso_bookings$City, "^CHAM\\w*"))] = "CHAMPAIGN"
-ccso_bookings$City[!is.na(str_extract(ccso_bookings$City, "^U\\w*A"))] = "Urbana"
-
-ccso_bookings = ccso_bookings[dat$Days.in.Jail != "#VALUE!",]
-ccso_bookings$Days.in.Jail = as.numeric(ccso_bookings$Days.in.Jail)
+    mutate(Booking.Date.Time = parse_datetime(Booking.Date.Time, format = "%m/%d/%y %H:%M:%S")) %>% 
+    filter(Release.Date.Time != "1/00/00 00:00:00") %>%
+    mutate(Release.Date.Time = parse_datetime(Release.Date.Time, format = "%m/%d/%y %H:%M:%S")) %>% 
+    mutate(time.spent.in.jail = as.numeric(difftime(Release.Date.Time, Booking.Date.Time, units = "hours"))) %>%
+    select(RACE, SEX, CITY, MARITIAL.STATUS, time.spent.in.jail) %>%
+    rename(Race = RACE, Sex = SEX, City = CITY, MaritalStatus = MARITIAL.STATUS, TimeSpentInJail = time.spent.in.jail)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -64,9 +58,8 @@ server <- function(input, output) {
             filter(City %in% input$checkCity)
         
         ggplot(data = dat) +
-          geom_histogram(aes(x = Days.in.Jail)) +
+          geom_histogram(aes(x = D.in.Jail)) +
           theme_minimal()
-            #geom_point(mapping = aes(x = BookingDateTime, y = TimeSpentInJail), col = "lightblue", size = 1)
     })
 }
 # Run the app
