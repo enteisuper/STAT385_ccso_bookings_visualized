@@ -37,6 +37,9 @@ dat <- ccso_bookings %>% dplyr::select(RACE, MARITIAL.STATUS, SEX, CITY, Days.in
   rename(City = CITY) %>%
   mutate(City = as.factor(City))
 
+dat = dat[dat$Days.in.Jail != "#VALUE!",]
+dat$Days.in.Jail = as.numeric(dat$Days.in.Jail)
+
 # Define UI for application that draws a histogram
 ui <- fluidPage(
   titlePanel("Length of Time Spent in Champaign County Jails by Various Demographics"),
