@@ -58,8 +58,8 @@ server <- function(input, output) {
             filter(City %in% input$checkCity)
         
         ggplot(data = dat) +
-          geom_histogram(aes(x = D.in.Jail)) +
-          theme_minimal()
+            geom_histogram(aes(x = TimeSpentInJail)) +
+            theme_minimal()
     })
 }
 # Run the app
