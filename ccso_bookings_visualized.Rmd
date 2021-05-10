@@ -3,6 +3,7 @@ title: "STAT 385 Final Project"
 author: ""
 date: "Due by 12:00 PM noon CST on 05/14/2021"
 output: html_document
+runtime: shiny
 ---
 
 YouTube Video: 
@@ -13,7 +14,9 @@ library(ggplot2)
 library(shiny)
 
 original <- read.csv("https://uofi.box.com/shared/static/9elozjsg99bgcb7gb546wlfr3r2gc9b7.csv")
+```
 
+```{r}
 ccso_bookings = original %>% 
     mutate(Booking.Date.Time = parse_datetime(Booking.Date.Time, format = "%m/%d/%y %H:%M:%S")) %>% 
     filter(Release.Date.Time != "1/00/00 00:00:00") %>%
@@ -21,6 +24,27 @@ ccso_bookings = original %>%
     mutate(time.spent.in.jail = as.numeric(difftime(Release.Date.Time, Booking.Date.Time, units = "hours"))) %>%
     select(RACE, SEX, CITY, MARITIAL.STATUS, time.spent.in.jail) %>%
     rename(Race = RACE, Sex = SEX, City = CITY, MaritalStatus = MARITIAL.STATUS, TimeSpentInJail = time.spent.in.jail)
+
+# used for day in jail
+ccso_bookings_days = original %>% 
+    mutate(Booking.Date.Time = parse_datetime(Booking.Date.Time, format = "%m/%d/%y %H:%M:%S")) %>% 
+    filter(Release.Date.Time != "1/00/00 00:00:00") %>%
+    mutate(Release.Date.Time = parse_datetime(Release.Date.Time, format = "%m/%d/%y %H:%M:%S")) %>% 
+    mutate(time.spent.in.jail = as.numeric(difftime(Release.Date.Time, Booking.Date.Time, units = "days"))) %>%
+    select(RACE, SEX, CITY, MARITIAL.STATUS, time.spent.in.jail) %>%
+    rename(Race = RACE, Sex = SEX, City = CITY, MaritalStatus = MARITIAL.STATUS, TimeSpentInJail = time.spent.in.jail)
+```
+
+```{r}
+# histogram
+graph_days_in_jail = hist(ccso_bookings_days$TimeSpentInJail, breaks = 80, xlim=c(0,300))
+
+# bunch of line graphs
+
+
+```
+
+```{r}
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
