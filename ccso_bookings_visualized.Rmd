@@ -5,6 +5,11 @@ date: "Due by 12:00 PM noon CST on 05/14/2021"
 output: html_document
 runtime: shiny
 ---
+Group Members:
+- Kayla Winfrey: kaylarw2
+- Yuchen Wang: yuchenw7
+- Zihe Wu: zihewu2
+- Henrik Yushin Tseng: hyt2
 
 YouTube Video: 
 
@@ -71,7 +76,6 @@ server <- function(input, output) {
 shinyApp(ui = ui, server = server,options = list(height = 600))
 ```
 ```{r, eval = FALSE}
-
 # don't need this section
 
 # histogram
