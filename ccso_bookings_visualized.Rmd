@@ -12,20 +12,23 @@ library(tidyverse)
 library(ggplot2)
 library(shiny)
 
-ccso_bookings <- read.csv("https://uofi.box.com/shared/static/9elozjsg99bgcb7gb546wlfr3r2gc9b7.csv")
+original <- read.csv("https://uofi.box.com/shared/static/9elozjsg99bgcb7gb546wlfr3r2gc9b7.csv")
 
-dat <- ccso_bookings %>% dplyr::select(RACE, MARITIAL.STATUS, SEX, CITY, Days.in.Jail) %>%
+ccso_bookings = original %>% 
+    mutate(Booking.Date.Time = parse_datetime(Booking.Date.Time, format = "%m/%d/%y %H:%M:%S")) %>% 
+    filter(Release.Date.Time != "1/00/00 00:00:00") %>%
+    mutate(Release.Date.Time = parse_datetime(Release.Date.Time, format = "%m/%d/%y %H:%M:%S")) %>% 
+    mutate(time.spent.in.jail = as.numeric(difftime(Release.Date.Time, Booking.Date.Time, units = "hours"))) %>%
+    select(RACE, MARITIAL.STATUS, SEX, CITY, Booking.Date.Time, time.spent.in.jail)
   rename(Race = RACE) %>%
   mutate(Race = as.factor(Race))  %>%
   rename(MaritalStatus = MARITIAL.STATUS) %>%
   mutate(MaritalStatus = as.factor(MaritalStatus)) %>%
   rename(Sex = SEX) %>%
-  mutate(Sex = as.factor(Sex)) %>%
-  rename(City = CITY) %>%
-  mutate(City = as.factor(City))
+  mutate(Sex = as.factor(Sex)) 
+ccso_bookings$CITY[!is.na(str_extract(ccso_bookings$CITY, "^CHAM\\w*"))] = "CHAMPAIGN"
+ccso_bookings$CITY[!is.na(str_extract(ccso_bookings$CITY, "^U\\w*A"))] = "Urbana"
 
-dat = dat[dat$Days.in.Jail != "#VALUE!",]
-dat$Days.in.Jail = as.numeric(dat$Days.in.Jail)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -62,10 +65,8 @@ server <- function(input, output) {
           filter(MaritalStatus %in% input$checkMarital) %>%
           filter(Sex %in% input$checkSex) %>%
           filter(City %in% input$checkCity)
-        ggplot(dat, aes(x = dat$Days.in.Jail)) + 
-          geom_histogram() + 
-          theme_minimal() + 
-          labs(x="Length of Time in Jail (Days)")
+        ggplot(data = ccso_bookings) +
+          geom_point(mapping = aes(x = Booking.Date.Time, y = time.spent.in.jail), col = "lightblue", size = 1)
   })
 }
 # Run the app
