@@ -14,6 +14,15 @@ library(ggplot2)
 library(shiny)
 
 original <- read.csv("https://uofi.box.com/shared/static/9elozjsg99bgcb7gb546wlfr3r2gc9b7.csv")
+
+# used for day in jail
+ccso_bookings_days = original %>% 
+    mutate(Booking.Date.Time = parse_datetime(Booking.Date.Time, format = "%m/%d/%y %H:%M:%S")) %>% 
+    filter(Release.Date.Time != "1/00/00 00:00:00") %>%
+    mutate(Release.Date.Time = parse_datetime(Release.Date.Time, format = "%m/%d/%y %H:%M:%S")) %>% 
+    mutate(time.spent.in.jail = as.numeric(difftime(Release.Date.Time, Booking.Date.Time, units = "days"))) %>%
+    select(RACE, SEX, CITY, MARITIAL.STATUS, time.spent.in.jail) %>%
+    rename(Race = RACE, Sex = SEX, City = CITY, MaritalStatus = MARITIAL.STATUS, TimeSpentInJail = time.spent.in.jail)
 ```
 
 ```{r}
@@ -46,7 +55,7 @@ ui <- fluidPage(
 server <- function(input, output) {
     
     output$Plot <- renderPlot({
-        dat <- ccso_bookings %>% 
+        dat <- ccso_bookings_days %>% 
             filter(Race %in% input$checkRace) %>%
             filter(MaritalStatus %in% input$checkMarital) %>%
             filter(Sex %in% input$checkSex) %>%
