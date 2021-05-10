@@ -8,7 +8,7 @@ runtime: shiny
 
 YouTube Video: 
 
-```{r}
+```{r, message=FALSE}
 library(tidyverse)
 library(ggplot2)
 library(shiny)
@@ -17,25 +17,54 @@ original <- read.csv("https://uofi.box.com/shared/static/9elozjsg99bgcb7gb546wlf
 ```
 
 ```{r}
-ccso_bookings = original %>% 
-    mutate(Booking.Date.Time = parse_datetime(Booking.Date.Time, format = "%m/%d/%y %H:%M:%S")) %>% 
-    filter(Release.Date.Time != "1/00/00 00:00:00") %>%
-    mutate(Release.Date.Time = parse_datetime(Release.Date.Time, format = "%m/%d/%y %H:%M:%S")) %>% 
-    mutate(time.spent.in.jail = as.numeric(difftime(Release.Date.Time, Booking.Date.Time, units = "hours"))) %>%
-    select(RACE, SEX, CITY, MARITIAL.STATUS, time.spent.in.jail) %>%
-    rename(Race = RACE, Sex = SEX, City = CITY, MaritalStatus = MARITIAL.STATUS, TimeSpentInJail = time.spent.in.jail)
-
-# used for day in jail
-ccso_bookings_days = original %>% 
-    mutate(Booking.Date.Time = parse_datetime(Booking.Date.Time, format = "%m/%d/%y %H:%M:%S")) %>% 
-    filter(Release.Date.Time != "1/00/00 00:00:00") %>%
-    mutate(Release.Date.Time = parse_datetime(Release.Date.Time, format = "%m/%d/%y %H:%M:%S")) %>% 
-    mutate(time.spent.in.jail = as.numeric(difftime(Release.Date.Time, Booking.Date.Time, units = "days"))) %>%
-    select(RACE, SEX, CITY, MARITIAL.STATUS, time.spent.in.jail) %>%
-    rename(Race = RACE, Sex = SEX, City = CITY, MaritalStatus = MARITIAL.STATUS, TimeSpentInJail = time.spent.in.jail)
+# Define UI for application that draws a histogram
+ui <- fluidPage(
+    titlePanel("Length of Time Spent in Champaign County Jails by Various Demographics"),
+    
+    sidebarPanel(
+        
+        selectInput("checkRace", 
+        h3("Race"), choices = list("White" = "White", "Hispanic" = "Hispanic", "White (Hispanic)" = "White (Hispanic)", "Black" = "Black", "Asian/Pacific Islander" = "Asian/Pacific Islander", "Native American" = "Native American", "Unknown" = "Unknown"), selected = "White"),
+        
+        selectInput("checkMarital", 
+        h3("Marital Status"), choices = list("Married" =  "Married", "Single" = "Single", "Seperated" = "Separated", "Significant Other" = "Significant Other", "Divorced" = "Divorced", "Widowed" = "Widowed", "Unknown" = "Unknown"), selected = "Married"),
+        
+        selectInput("checkSex", 
+        h3("Sex"), choices = list("Female" = "Female", "Male" = "Male"), selected = "Female"),
+        
+        selectInput("checkCity", 
+        h3("City"), choices = list("Champaign" = "CHAMPAIGN", "Urbana" = "URBANA")),
+        width = 3
+    ),
+    
+    mainPanel( 
+        # Show a plot of the generated distribution
+        plotOutput("Plot")
+    )
+)
+# Define server logic required to draw a ggplot
+server <- function(input, output) {
+    
+    output$Plot <- renderPlot({
+        dat <- ccso_bookings %>% 
+            filter(Race %in% input$checkRace) %>%
+            filter(MaritalStatus %in% input$checkMarital) %>%
+            filter(Sex %in% input$checkSex) %>%
+            filter(City %in% input$checkCity)
+        
+        ggplot(data = dat) +
+            geom_histogram(aes(x = TimeSpentInJail), color = "lightblue", fill = "lightblue") +
+            theme_minimal() +
+            xlab("Time Spent in Jail (Days")
+    })
+}
+# Run the app
+shinyApp(ui = ui, server = server,options = list(height = 600))
 ```
+```{r, eval = FALSE}
 
-```{r}
+# don't need this section
+
 # histogram
 graph_days_in_jail = hist(ccso_bookings_days$TimeSpentInJail, breaks = 80, xlim = c(0,300), col = "blue", main = "Days Spend in Jail", xlab = "Days", ylab = "Number of People")
 
@@ -95,74 +124,4 @@ histogram_champaign <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geo
 ccso_bookings_cur <- ccso_bookings_days[ccso_bookings_days$City == "URBANA",]
 histogram_urbana <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geom_histogram(bins = 40) + xlim(0, 300) + ylim(0, 10000) + xlab("days in jail")
 
-```
-
-```{r}
-# this part is for printing/debugging, can delete this section when done
-# list of all histograms and names
-#histogram_white
-#histogram_hispanic
-#histogram_white_hispanic
-#histogram_black
-#histogram_asian
-#histogram_native_american
-#histogram_race_unknown
-#histogram_married
-#histogram_single
-#histogram_seperated
-#histogram_significant_other
-#histogram_divorced
-#histogram_widowed
-#histogram_marriage_unknown
-#histogram_male
-#histogram_female
-#histogram_champaign
-#histogram_urbana
-
-```
-
-```{r}
-
-# Define UI for application that draws a histogram
-ui <- fluidPage(
-    titlePanel("Length of Time Spent in Champaign County Jails by Various Demographics"),
-    
-    sidebarPanel(
-        
-        checkboxGroupInput("checkRace", 
-        h3("Race"), choices = list("White" = "White", "Hispanic" = "Hispanic", "White (Hispanic)" = "White (Hispanic)", "Black" = "Black", "Asian/Pacific Islander" = "Asian/Pacific Islander", "Native American" = "Native American", "Unknown" = "Unknown"), selected = "White"),
-        
-        checkboxGroupInput("checkMarital", 
-        h3("MaritalStatus"), choices = list("Married" =  "Married", "Single" = "Single", "Seperated" = "Separated", "Significant Other", "Divorced" = "Divorced", "Widowed" = "Widowed", "Unknown" = "Unknown"), selected = "Married"),
-        
-        checkboxGroupInput("checkSex", 
-        h3("Sex"), choices = list("Female" =  "Female", "Male" = "Male"), selected = "Female"),
-        
-        checkboxGroupInput("checkCity", 
-        h3("City"), choices = list("Champaign" =  "Champaign", "Urbana" = "Urbana"), selected = "Champaign"),
-        width = 3
-    ),
-    
-    mainPanel( 
-        # Show a plot of the generated distribution
-        plotOutput("Plot")
-    )
-)
-# Define server logic required to draw a ggplot
-server <- function(input, output) {
-    output$Plot <- renderPlot({
-        # generate bins based on input$bins from ui.R
-        dat <- ccso_bookings %>% 
-            filter(Race %in% input$checkRace) %>%
-            filter(MaritalStatus %in% input$checkMarital) %>%
-            filter(Sex %in% input$checkSex) %>%
-            filter(City %in% input$checkCity)
-        
-        ggplot(data = dat) +
-            geom_histogram(aes(x = TimeSpentInJail)) +
-            theme_minimal()
-    })
-}
-# Run the app
-shinyApp(ui = ui, server = server,options = list(height = 600))
 ```
