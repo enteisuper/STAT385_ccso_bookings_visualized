@@ -37,10 +37,87 @@ ccso_bookings_days = original %>%
 
 ```{r}
 # histogram
-graph_days_in_jail = hist(ccso_bookings_days$TimeSpentInJail, breaks = 80, xlim=c(0,300))
+graph_days_in_jail = hist(ccso_bookings_days$TimeSpentInJail, breaks = 80, xlim = c(0,300), col = "blue", main = "Days Spend in Jail", xlab = "Days", ylab = "Number of People")
 
-# bunch of line graphs
+# bunch of histograms
+ccso_bookings_cur <- ccso_bookings_days[ccso_bookings_days$Race == "White",]
+histogram_white <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geom_histogram(bins = 40) + xlim(0, 300) + ylim(0, 10000) + xlab("days in jail")
 
+ccso_bookings_cur <- ccso_bookings_days[ccso_bookings_days$Race == "Hispanic",]
+histogram_hispanic <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geom_histogram(bins = 40) + xlim(0, 300) + ylim(0, 10000) + xlab("days in jail")
+
+ccso_bookings_cur <- ccso_bookings_days[ccso_bookings_days$Race == "Hispanic" | ccso_bookings_days$Race == "White",]
+histogram_white_hispanic <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geom_histogram(bins = 40) + xlim(0, 300) + ylim(0, 10000) + xlab("days in jail")
+
+
+ccso_bookings_cur <- ccso_bookings_days[ccso_bookings_days$Race == "Black",]
+histogram_black <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geom_histogram(bins = 40) + xlim(0, 300) + ylim(0, 10000) + xlab("days in jail")
+
+ccso_bookings_cur <- ccso_bookings_days[ccso_bookings_days$Race == "Asian/Pacific Islander",]
+histogram_asian <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geom_histogram(bins = 40) + xlim(0, 300) + ylim(0, 100) + xlab("days in jail")
+
+ccso_bookings_cur <- ccso_bookings_days[ccso_bookings_days$Race == "Native American",]
+histogram_native_american <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geom_histogram(bins = 40) + xlim(0, 300) + ylim(0, 100) + xlab("days in jail")
+
+ccso_bookings_cur <- ccso_bookings_days[ccso_bookings_days$Race == "Unknown",]
+histogram_race_unknown <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geom_histogram(bins = 40) + xlim(0, 300) + ylim(0, 100) + xlab("days in jail")
+
+ccso_bookings_cur <- ccso_bookings_days[ccso_bookings_days$MaritalStatus == "Married",]
+histogram_married <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geom_histogram(bins = 40) + xlim(0, 300) + ylim(0, 10000) + xlab("days in jail")
+
+ccso_bookings_cur <- ccso_bookings_days[ccso_bookings_days$MaritalStatus == "Single",]
+histogram_single <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geom_histogram(bins = 40) + xlim(0, 300) + ylim(0, 10000) + xlab("days in jail")
+
+ccso_bookings_cur <- ccso_bookings_days[ccso_bookings_days$MaritalStatus == "Seperated",]
+histogram_seperated <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geom_histogram(bins = 40) + xlim(0, 300) + ylim(0, 100) + xlab("days in jail")
+
+ccso_bookings_cur <- ccso_bookings_days[ccso_bookings_days$MaritalStatus == "Significant Other",]
+histogram_significant_other <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geom_histogram(bins = 40) + xlim(0, 300) + ylim(0, 100) + xlab("days in jail")
+
+ccso_bookings_cur <- ccso_bookings_days[ccso_bookings_days$MaritalStatus == "Divorced",]
+histogram_divorced <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geom_histogram(bins = 40) + xlim(0, 300) + ylim(0, 1000) + xlab("days in jail")
+
+ccso_bookings_cur <- ccso_bookings_days[ccso_bookings_days$MaritalStatus == "Widowed",]
+histogram_widowed <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geom_histogram(bins = 40) + xlim(0, 300) + ylim(0, 100) + xlab("days in jail")
+
+ccso_bookings_cur <- ccso_bookings_days[ccso_bookings_days$MaritalStatus == "Unknown",]
+histogram_marriage_unknown <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geom_histogram(bins = 40) + xlim(0, 300) + ylim(0, 100) + xlab("days in jail")
+
+ccso_bookings_cur <- ccso_bookings_days[ccso_bookings_days$Sex == "Male",]
+histogram_male <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geom_histogram(bins = 40) + xlim(0, 300) + ylim(0, 10000) + xlab("days in jail")
+
+ccso_bookings_cur <- ccso_bookings_days[ccso_bookings_days$Sex == "Female",]
+histogram_female <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geom_histogram(bins = 40) + xlim(0, 300) + ylim(0, 1000) + xlab("days in jail")
+
+ccso_bookings_cur <- ccso_bookings_days[ccso_bookings_days$City == "CHAMPAIGN",]
+histogram_champaign <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geom_histogram(bins = 40) + xlim(0, 300) + ylim(0, 10000) + xlab("days in jail")
+
+ccso_bookings_cur <- ccso_bookings_days[ccso_bookings_days$City == "URBANA",]
+histogram_urbana <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geom_histogram(bins = 40) + xlim(0, 300) + ylim(0, 10000) + xlab("days in jail")
+
+```
+
+```{r}
+# this part is for printing/debugging, can delete this section when done
+# list of all histograms and names
+#histogram_white
+#histogram_hispanic
+#histogram_white_hispanic
+#histogram_black
+#histogram_asian
+#histogram_native_american
+#histogram_race_unknown
+#histogram_married
+#histogram_single
+#histogram_seperated
+#histogram_significant_other
+#histogram_divorced
+#histogram_widowed
+#histogram_marriage_unknown
+#histogram_male
+#histogram_female
+#histogram_champaign
+#histogram_urbana
 
 ```
 
@@ -53,7 +130,7 @@ ui <- fluidPage(
     sidebarPanel(
         
         checkboxGroupInput("checkRace", 
-        h3("Race"), choices = list("White" = "White", "Hispanic" = "Hispanic", "White (Hispanic)" = "White (Hispanic)", "Black" = "Black", "Asian/Pacific Islander" = "Asian/Pacific Islander", "Native American" = "Native American", "Unknonwn" = "Unknown"), selected = "White"),
+        h3("Race"), choices = list("White" = "White", "Hispanic" = "Hispanic", "White (Hispanic)" = "White (Hispanic)", "Black" = "Black", "Asian/Pacific Islander" = "Asian/Pacific Islander", "Native American" = "Native American", "Unknown" = "Unknown"), selected = "White"),
         
         checkboxGroupInput("checkMarital", 
         h3("MaritalStatus"), choices = list("Married" =  "Married", "Single" = "Single", "Seperated" = "Separated", "Significant Other", "Divorced" = "Divorced", "Widowed" = "Widowed", "Unknown" = "Unknown"), selected = "Married"),
