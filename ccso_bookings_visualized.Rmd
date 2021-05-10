@@ -38,14 +38,17 @@ ui <- fluidPage(
   
   sidebarPanel(
     
-    checkboxGroupInput("checkGroup", 
+    checkboxGroupInput("checkRace", 
       h3("Race"), choices = list("White" = "White", 
       "Hispanic" = "Hispanic", "White (Hispanic)" = "White (Hispanic)", "Black" = "Black", "Asian/Pacific Islander" = "Asian/Pacific Islander", "Native American" = "Native American", "Unknonwn" = "Unknown")),
-    checkboxGroupInput("checkGroup", 
+    
+    checkboxGroupInput("checkMarital", 
       h3("Marital Status"), choices = list("Married" =  "Married", "Single" = "Single", "Seperated" = "Separated", "Significant Other", "Divorced" = "Divorced", "Widowed" = "Widowed", "Unknown" = "Unknown")),
-    checkboxGroupInput("checkGroup", 
+    
+    checkboxGroupInput("checkSex", 
       h3("Sex"), choices = list("Female" =  "Female", "Male" = "Male")),
-    checkboxGroupInput("checkGroup", 
+    
+    checkboxGroupInput("checkCity", 
       h3("City"), choices = list("Champaign" =  "Champaign", "Urbana" = "Urbana")),
     width = 3
   ),
