@@ -14,7 +14,7 @@ Group Members:
 
 YouTube Video: 
 
-```{r, message=FALSE}
+```{r, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(ggplot2)
 library(shiny)
@@ -22,7 +22,7 @@ library(shinyWidgets)
 
 original <- read.csv("https://uofi.box.com/shared/static/9elozjsg99bgcb7gb546wlfr3r2gc9b7.csv")
 
-# Get the dataset ready for the plot
+# Get our dataset ready for plotting
 ccso_bookings = original %>% 
     mutate(Booking.Date.Time = parse_datetime(Booking.Date.Time, format = "%m/%d/%y %H:%M:%S")) %>% 
     filter(Release.Date.Time != "1/00/00 00:00:00") %>%
