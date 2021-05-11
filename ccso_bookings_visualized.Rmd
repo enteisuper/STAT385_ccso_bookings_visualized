@@ -18,19 +18,17 @@ YouTube Video:
 library(tidyverse)
 library(ggplot2)
 library(shiny)
+library(shinyWidgets)
 
 original <- read.csv("https://uofi.box.com/shared/static/9elozjsg99bgcb7gb546wlfr3r2gc9b7.csv")
 
 # used for day in jail
-ccso_bookings_days = original %>% 
+ccso_bookings = original %>% 
     mutate(Booking.Date.Time = parse_datetime(Booking.Date.Time, format = "%m/%d/%y %H:%M:%S")) %>% 
     filter(Release.Date.Time != "1/00/00 00:00:00") %>%
-    mutate(Release.Date.Time = parse_datetime(Release.Date.Time, format = "%m/%d/%y %H:%M:%S")) %>% 
-    mutate(time.spent.in.jail = as.numeric(difftime(Release.Date.Time, Booking.Date.Time, units = "days"))) %>%
-    select(RACE, SEX, CITY, MARITIAL.STATUS, time.spent.in.jail) %>%
-    rename(Race = RACE, Sex = SEX, City = CITY, MaritalStatus = MARITIAL.STATUS, TimeSpentInJail = time.spent.in.jail)
-ccso_bookings_days$City[!is.na(str_extract(ccso_bookings_days$City, "^CHAM\\w*"))] = "CHAMPAIGN"
-ccso_bookings_days$City[!is.na(str_extract(ccso_bookings_days$City, "^U\\w*A"))] = "URBANA"
+    mutate(Release.Date.Time = parse_datetime(Release.Date.Time, format = "%m/%d/%y %H:%M:%S"))
+ccso_bookings$CITY[!is.na(str_extract(ccso_bookings$CITY, "^CHAM\\w*"))] = "CHAMPAIGN"
+ccso_bookings$CITY[!is.na(str_extract(ccso_bookings$CITY, "^U\\w*A"))] = "URBANA"
 ```
 
 ```{r}
@@ -41,22 +39,27 @@ ui <- fluidPage(
     sidebarPanel(
         
         selectInput("checkRace", 
-        h3("Race"), choices = list("White" = "White", "Hispanic" = "Hispanic", "White (Hispanic)" = "White (Hispanic)", "Black" = "Black", "Asian/Pacific Islander" = "Asian/Pacific Islander", "Native American" = "Native American", "Unknown" = "Unknown"), selected = "White"),
+        h4("Race"), choices = list("White" = "White", "Hispanic" = "Hispanic", "White (Hispanic)" = "White (Hispanic)", "Black" = "Black", "Asian/Pacific Islander" = "Asian/Pacific Islander", "Native American" = "Native American", "Unknown" = "Unknown"), selected = "White"),
         
         selectInput("checkMarital", 
-        h3("Marital Status"), choices = list("Married" =  "Married", "Single" = "Single", "Seperated" = "Separated", "Significant Other" = "Significant Other", "Divorced" = "Divorced", "Widowed" = "Widowed", "Unknown" = "Unknown"), selected = "Married"),
+        h4("Marital Status"), choices = list("Married" =  "Married", "Single" = "Single", "Seperated" = "Separated", "Significant Other" = "Significant Other", "Divorced" = "Divorced", "Widowed" = "Widowed", "Unknown" = "Unknown"), selected = "Married"),
         
         selectInput("checkSex", 
-        h3("Sex"), choices = list("Female" = "Female", "Male" = "Male"), selected = "Female"),
+        h4("Sex"), choices = list("Female" = "Female", "Male" = "Male"), selected = "Female"),
         
         selectInput("checkCity", 
-        h3("City"), choices = list("Champaign" = "CHAMPAIGN", "Urbana" = "URBANA")),
+        h4("City"), choices = list("Champaign" = "CHAMPAIGN", "Urbana" = "URBANA")),
+        
+        materialSwitch("switch", label = h4("Switch to Hours"), status = "info"),
+        
         width = 3
     ),
     
     mainPanel( 
         # Show a plot of the generated distribution
         plotOutput("Plot"),
+        
+        # Show the sample size 
         uiOutput("SampleSize")
     )
 )
@@ -64,23 +67,31 @@ ui <- fluidPage(
 server <- function(input, output) {
     
     output$Plot <- renderPlot({
-        dat <- ccso_bookings_days %>% 
-            filter(Race %in% input$checkRace) %>%
-            filter(MaritalStatus %in% input$checkMarital) %>%
-            filter(Sex %in% input$checkSex) %>%
-            filter(City %in% input$checkCity)
+        dat <- ccso_bookings %>% 
+            filter(RACE %in% input$checkRace) %>%
+            filter(MARITIAL.STATUS %in% input$checkMarital) %>%
+            filter(SEX %in% input$checkSex) %>%
+            filter(CITY %in% input$checkCity) %>%
+            mutate(time.spent.in.jail = as.numeric(difftime(Release.Date.Time, Booking.Date.Time, units = ifelse(input$switch, "hours", "days")))) %>%
+            select(RACE, SEX, CITY, MARITIAL.STATUS, time.spent.in.jail)
+        
         ggplot(data = dat) +
-            geom_histogram(aes(x = TimeSpentInJail), color = "lightblue", fill = "lightblue") +
+            geom_histogram(aes(x = time.spent.in.jail), color = "lightblue", fill = "lightblue", binwidth = 25) +
+            labs(x = "Time Spent in Jail (Default: Days)", caption = "Note: the default time spent in jail is in days but the switch on the left can alter the unit into hours") + 
             theme_minimal() +
-            xlab("Time Spent in Jail (Days)")
+            theme(plot.caption = element_text(hjust = 0.5))
         
     })
+    
     output$SampleSize <- renderTable({
-        dat <- ccso_bookings_days %>% 
-            filter(Race %in% input$checkRace) %>%
-            filter(MaritalStatus %in% input$checkMarital) %>%
-            filter(Sex %in% input$checkSex) %>%
-            filter(City %in% input$checkCity)
+        dat <- ccso_bookings %>% 
+            filter(RACE %in% input$checkRace) %>%
+            filter(MARITIAL.STATUS %in% input$checkMarital) %>%
+            filter(SEX %in% input$checkSex) %>%
+            filter(CITY %in% input$checkCity) %>%
+            mutate(time.spent.in.jail = as.numeric(difftime(Release.Date.Time, Booking.Date.Time, units = ifelse(input$switch, "hours", "days")))) %>%
+            select(RACE, SEX, CITY, MARITIAL.STATUS, time.spent.in.jail)
+        
         data.frame("Sample" = nrow(dat))})
 }
 # Run the app
