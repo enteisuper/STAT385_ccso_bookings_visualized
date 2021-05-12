@@ -37,10 +37,10 @@ ui <- fluidPage(
     sidebarPanel(
         
         selectInput("checkRace", 
-        h4("Race"), choices = list("White" = "White", "Hispanic" = "Hispanic", "White (Hispanic)" = "White (Hispanic)", "Black" = "Black", "Asian/Pacific Islander" = "Asian/Pacific Islander", "Native American" = "Native American", "Unknown" = "Unknown"), selected = "White"),
+        h4("Race"), choices = list("White" = "White", "Hispanic" = "Hispanic", "White (Hispanic)" = "White (Hispanic)", "Black" = "Black", "Asian/Pacific Islander" = "Asian/Pacific Islander", "Native American" = "Native American"), selected = "White"),
         
         selectInput("checkMarital", 
-        h4("Marital Status"), choices = list("Married" =  "Married", "Single" = "Single", "Seperated" = "Separated", "Significant Other" = "Significant Other", "Divorced" = "Divorced", "Widowed" = "Widowed", "Unknown" = "Unknown"), selected = "Married"),
+        h4("Marital Status"), choices = list("Married" =  "Married", "Single" = "Single", "Seperated" = "Separated", "Significant Other" = "Significant Other", "Divorced" = "Divorced", "Widowed" = "Widowed"), selected = "Married"),
         
         selectInput("checkSex", 
         h4("Sex"), choices = list("Female" = "Female", "Male" = "Male"), selected = "Female"),
@@ -74,10 +74,10 @@ server <- function(input, output) {
             select(RACE, SEX, MARITIAL.STATUS, EMPLOYMENT.STATUS, time.spent.in.jail)
         
         ggplot(data = dat) +
-            geom_histogram(aes(x = time.spent.in.jail), color = "lightblue", fill = "lightblue", binwidth = 5) +
+            geom_histogram(aes(x = time.spent.in.jail), color = "lightblue", fill = "lightblue", binwidth = 1) +
             labs(x = "Time Spent in Jail (Default: Days)", caption = "Note: the default time spent in jail is in days but the switch on the left can alter the unit into hours") + 
             theme_minimal() +
-            scale_x_continuous(limits = c(0,200)) +
+            xlim(c(0,200)) +
             theme(plot.caption = element_text(hjust = 0.5))
         
     })
