@@ -71,7 +71,7 @@ server <- function(input, output) {
             filter(SEX %in% input$checkSex) %>%
             filter(EMPLOYMENT.STATUS %in% input$checkEmployment) %>%
             mutate(time.spent.in.jail = as.numeric(difftime(Release.Date.Time, Booking.Date.Time, units = ifelse(input$switch, "hours", "days")))) %>%
-            select(RACE, SEX, CITY, MARITIAL.STATUS, EMPLOYMENT.STATUS, time.spent.in.jail)
+            select(RACE, SEX, MARITIAL.STATUS, EMPLOYMENT.STATUS, time.spent.in.jail)
         
         ggplot(data = dat) +
             geom_histogram(aes(x = time.spent.in.jail), color = "lightblue", fill = "lightblue", binwidth = 5) +
@@ -89,9 +89,10 @@ server <- function(input, output) {
             filter(SEX %in% input$checkSex) %>%
             filter(EMPLOYMENT.STATUS %in% input$checkEmployment) %>%
             mutate(time.spent.in.jail = as.numeric(difftime(Release.Date.Time, Booking.Date.Time, units = ifelse(input$switch, "hours", "days")))) %>%
-            select(RACE, SEX, CITY, MARITIAL.STATUS, EMPLOYMENT.STATUS, time.spent.in.jail)
+            select(RACE, SEX, MARITIAL.STATUS, EMPLOYMENT.STATUS, time.spent.in.jail)
         
         data.frame("Sample" = nrow(dat), "Average" = mean(dat$time.spent.in.jail))})
+    
 }
 # Run the app
 shinyApp(ui = ui, server = server,options = list(height = 600))
