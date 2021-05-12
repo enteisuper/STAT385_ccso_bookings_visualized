@@ -27,8 +27,6 @@ ccso_bookings = original %>%
     mutate(Booking.Date.Time = parse_datetime(Booking.Date.Time, format = "%m/%d/%y %H:%M:%S")) %>% 
     filter(Release.Date.Time != "1/00/00 00:00:00") %>%
     mutate(Release.Date.Time = parse_datetime(Release.Date.Time, format = "%m/%d/%y %H:%M:%S"))
-ccso_bookings$CITY[!is.na(str_extract(ccso_bookings$CITY, "^CHAM\\w*"))] = "CHAMPAIGN"
-ccso_bookings$CITY[!is.na(str_extract(ccso_bookings$CITY, "^U\\w*A"))] = "URBANA"
 ```
 
 ```{r}
@@ -47,8 +45,8 @@ ui <- fluidPage(
         selectInput("checkSex", 
         h4("Sex"), choices = list("Female" = "Female", "Male" = "Male"), selected = "Female"),
         
-        selectInput("checkCity", 
-        h4("City"), choices = list("Champaign" = "CHAMPAIGN", "Urbana" = "URBANA")),
+        selectInput("checkEmployment", 
+        h4("Employment"), choices = list("Employed - Full Time" = "Employed - Full Time", "Employed - Part Time" = "Employed - Part Time", "Laid Off" = "Laid Off", "Retired" = "Retired", "Self Employed" = "Self Employed", "Student" = "Student", "Unemployed" = "Unemployed")),
         
         materialSwitch("switch", label = h4("Switch to Hours"), status = "info"),
         
@@ -71,9 +69,9 @@ server <- function(input, output) {
             filter(RACE %in% input$checkRace) %>%
             filter(MARITIAL.STATUS %in% input$checkMarital) %>%
             filter(SEX %in% input$checkSex) %>%
-            filter(CITY %in% input$checkCity) %>%
+            filter(EMPLOYMENT.STATUS %in% input$checkEmployment) %>%
             mutate(time.spent.in.jail = as.numeric(difftime(Release.Date.Time, Booking.Date.Time, units = ifelse(input$switch, "hours", "days")))) %>%
-            select(RACE, SEX, CITY, MARITIAL.STATUS, time.spent.in.jail)
+            select(RACE, SEX, CITY, MARITIAL.STATUS, EMPLOYMENT.STATUS, time.spent.in.jail)
         
         ggplot(data = dat) +
             geom_histogram(aes(x = time.spent.in.jail), color = "lightblue", fill = "lightblue", binwidth = 25) +
