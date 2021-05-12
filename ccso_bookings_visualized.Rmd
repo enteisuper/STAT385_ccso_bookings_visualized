@@ -102,5 +102,5 @@ server <- function(input, output) {
     
 }
 # Run the app
-shinyApp(ui = ui, server = server,options = list(height = 700))
+shinyApp(ui = ui, server = server,options = list(height = 800))
 ```
