@@ -91,9 +91,9 @@ server <- function(input, output) {
             mutate(time.spent.in.jail = as.numeric(difftime(Release.Date.Time, Booking.Date.Time, units = ifelse(input$switch, "hours", "days")))) %>%
             select(RACE, SEX, MARITIAL.STATUS, EMPLOYMENT.STATUS, time.spent.in.jail)
         
-        data.frame("Sample" = nrow(dat), "Average" = mean(dat$time.spent.in.jail))})
+        data.frame("Sample" = nrow(dat), "Average" = mean(dat$time.spent.in.jail), "Median" = median(dat$time.spent.in.jail), "Max Jailtime" = max(dat$time.spent.in.jail))})
     
 }
 # Run the app
-shinyApp(ui = ui, server = server,options = list(height = 600))
+shinyApp(ui = ui, server = server,options = list(height = 700))
 ```
