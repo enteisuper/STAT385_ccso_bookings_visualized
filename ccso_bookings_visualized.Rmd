@@ -86,9 +86,9 @@ server <- function(input, output) {
             filter(RACE %in% input$checkRace) %>%
             filter(MARITIAL.STATUS %in% input$checkMarital) %>%
             filter(SEX %in% input$checkSex) %>%
-            filter(CITY %in% input$checkCity) %>%
+            filter(EMPLOYMENT.STATUS %in% input$checkEmployment) %>%
             mutate(time.spent.in.jail = as.numeric(difftime(Release.Date.Time, Booking.Date.Time, units = ifelse(input$switch, "hours", "days")))) %>%
-            select(RACE, SEX, CITY, MARITIAL.STATUS, time.spent.in.jail)
+            select(RACE, SEX, CITY, MARITIAL.STATUS, EMPLOYMENT.STATUS, time.spent.in.jail)
         
         data.frame("Sample" = nrow(dat))})
 }
