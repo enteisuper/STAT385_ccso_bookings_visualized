@@ -74,7 +74,7 @@ server <- function(input, output) {
             select(RACE, SEX, CITY, MARITIAL.STATUS, EMPLOYMENT.STATUS, time.spent.in.jail)
         
         ggplot(data = dat) +
-            geom_histogram(aes(x = time.spent.in.jail), color = "lightblue", fill = "lightblue", binwidth = 25) +
+            geom_histogram(aes(x = time.spent.in.jail), color = "lightblue", fill = "lightblue", binwidth = 5) +
             labs(x = "Time Spent in Jail (Default: Days)", caption = "Note: the default time spent in jail is in days but the switch on the left can alter the unit into hours") + 
             theme_minimal() +
             theme(plot.caption = element_text(hjust = 0.5))
