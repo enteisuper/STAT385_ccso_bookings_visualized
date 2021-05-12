@@ -29,7 +29,7 @@ ccso_bookings = original %>%
     mutate(Release.Date.Time = parse_datetime(Release.Date.Time, format = "%m/%d/%y %H:%M:%S"))
 ```
 
-```{r}
+```{r, warning = FALSE}
 # Define UI for application that draws a histogram
 ui <- fluidPage(
     titlePanel("Length of Time Spent in Champaign County Jails by Various Demographics"),
@@ -77,6 +77,7 @@ server <- function(input, output) {
             geom_histogram(aes(x = time.spent.in.jail), color = "lightblue", fill = "lightblue", binwidth = 5) +
             labs(x = "Time Spent in Jail (Default: Days)", caption = "Note: the default time spent in jail is in days but the switch on the left can alter the unit into hours") + 
             theme_minimal() +
+            scale_x_continuous(limits = c(0,200)) +
             theme(plot.caption = element_text(hjust = 0.5))
         
     })
@@ -90,72 +91,8 @@ server <- function(input, output) {
             mutate(time.spent.in.jail = as.numeric(difftime(Release.Date.Time, Booking.Date.Time, units = ifelse(input$switch, "hours", "days")))) %>%
             select(RACE, SEX, CITY, MARITIAL.STATUS, EMPLOYMENT.STATUS, time.spent.in.jail)
         
-        data.frame("Sample" = nrow(dat))})
+        data.frame("Sample" = nrow(dat), "Average" = mean(dat$time.spent.in.jail))})
 }
 # Run the app
 shinyApp(ui = ui, server = server,options = list(height = 600))
-```
-
-```{r, eval = FALSE}
-# don't need this section
-
-# histogram
-graph_days_in_jail = hist(ccso_bookings_days$TimeSpentInJail, breaks = 80, xlim = c(0,300), col = "blue", main = "Days Spend in Jail", xlab = "Days", ylab = "Number of People")
-
-# bunch of histograms
-ccso_bookings_cur <- ccso_bookings_days[ccso_bookings_days$Race == "White",]
-histogram_white <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geom_histogram(bins = 40) + xlim(0, 300) + ylim(0, 10000) + xlab("days in jail")
-
-ccso_bookings_cur <- ccso_bookings_days[ccso_bookings_days$Race == "Hispanic",]
-histogram_hispanic <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geom_histogram(bins = 40) + xlim(0, 300) + ylim(0, 10000) + xlab("days in jail")
-
-ccso_bookings_cur <- ccso_bookings_days[ccso_bookings_days$Race == "Hispanic" | ccso_bookings_days$Race == "White",]
-histogram_white_hispanic <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geom_histogram(bins = 40) + xlim(0, 300) + ylim(0, 10000) + xlab("days in jail")
-
-
-ccso_bookings_cur <- ccso_bookings_days[ccso_bookings_days$Race == "Black",]
-histogram_black <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geom_histogram(bins = 40) + xlim(0, 300) + ylim(0, 10000) + xlab("days in jail")
-
-ccso_bookings_cur <- ccso_bookings_days[ccso_bookings_days$Race == "Asian/Pacific Islander",]
-histogram_asian <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geom_histogram(bins = 40) + xlim(0, 300) + ylim(0, 100) + xlab("days in jail")
-
-ccso_bookings_cur <- ccso_bookings_days[ccso_bookings_days$Race == "Native American",]
-histogram_native_american <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geom_histogram(bins = 40) + xlim(0, 300) + ylim(0, 100) + xlab("days in jail")
-
-ccso_bookings_cur <- ccso_bookings_days[ccso_bookings_days$Race == "Unknown",]
-histogram_race_unknown <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geom_histogram(bins = 40) + xlim(0, 300) + ylim(0, 100) + xlab("days in jail")
-
-ccso_bookings_cur <- ccso_bookings_days[ccso_bookings_days$MaritalStatus == "Married",]
-histogram_married <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geom_histogram(bins = 40) + xlim(0, 300) + ylim(0, 10000) + xlab("days in jail")
-
-ccso_bookings_cur <- ccso_bookings_days[ccso_bookings_days$MaritalStatus == "Single",]
-histogram_single <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geom_histogram(bins = 40) + xlim(0, 300) + ylim(0, 10000) + xlab("days in jail")
-
-ccso_bookings_cur <- ccso_bookings_days[ccso_bookings_days$MaritalStatus == "Seperated",]
-histogram_seperated <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geom_histogram(bins = 40) + xlim(0, 300) + ylim(0, 100) + xlab("days in jail")
-
-ccso_bookings_cur <- ccso_bookings_days[ccso_bookings_days$MaritalStatus == "Significant Other",]
-histogram_significant_other <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geom_histogram(bins = 40) + xlim(0, 300) + ylim(0, 100) + xlab("days in jail")
-
-ccso_bookings_cur <- ccso_bookings_days[ccso_bookings_days$MaritalStatus == "Divorced",]
-histogram_divorced <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geom_histogram(bins = 40) + xlim(0, 300) + ylim(0, 1000) + xlab("days in jail")
-
-ccso_bookings_cur <- ccso_bookings_days[ccso_bookings_days$MaritalStatus == "Widowed",]
-histogram_widowed <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geom_histogram(bins = 40) + xlim(0, 300) + ylim(0, 100) + xlab("days in jail")
-
-ccso_bookings_cur <- ccso_bookings_days[ccso_bookings_days$MaritalStatus == "Unknown",]
-histogram_marriage_unknown <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geom_histogram(bins = 40) + xlim(0, 300) + ylim(0, 100) + xlab("days in jail")
-
-ccso_bookings_cur <- ccso_bookings_days[ccso_bookings_days$Sex == "Male",]
-histogram_male <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geom_histogram(bins = 40) + xlim(0, 300) + ylim(0, 10000) + xlab("days in jail")
-
-ccso_bookings_cur <- ccso_bookings_days[ccso_bookings_days$Sex == "Female",]
-histogram_female <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geom_histogram(bins = 40) + xlim(0, 300) + ylim(0, 1000) + xlab("days in jail")
-
-ccso_bookings_cur <- ccso_bookings_days[ccso_bookings_days$City == "CHAMPAIGN",]
-histogram_champaign <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geom_histogram(bins = 40) + xlim(0, 300) + ylim(0, 10000) + xlab("days in jail")
-
-ccso_bookings_cur <- ccso_bookings_days[ccso_bookings_days$City == "URBANA",]
-histogram_urbana <- ggplot(ccso_bookings_cur, aes(x = TimeSpentInJail)) + geom_histogram(bins = 40) + xlim(0, 300) + ylim(0, 10000) + xlab("days in jail")
-
 ```
