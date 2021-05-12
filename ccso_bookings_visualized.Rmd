@@ -48,9 +48,12 @@ ui <- fluidPage(
         selectInput("checkEmployment", 
         h4("Employment"), choices = list("Employed - Full Time" = "Employed - Full Time", "Employed - Part Time" = "Employed - Part Time", "Laid Off" = "Laid Off", "Retired" = "Retired", "Self Employed" = "Self Employed", "Student" = "Student", "Unemployed" = "Unemployed")),
         
+        sliderInput("sliderPercentage",
+        h4("Percentage of the sample"), min = 1, max = 100, value = 100), 
+        
         materialSwitch("switch", label = h4("Switch to Hours"), status = "info"),
         
-        width = 3
+        width = 4
     ),
     
     mainPanel( 
@@ -65,13 +68,15 @@ ui <- fluidPage(
 server <- function(input, output) {
     
     output$Plot <- renderPlot({
-        dat <- ccso_bookings %>% 
+        dat = ccso_bookings %>% 
             filter(RACE %in% input$checkRace) %>%
             filter(MARITIAL.STATUS %in% input$checkMarital) %>%
             filter(SEX %in% input$checkSex) %>%
             filter(EMPLOYMENT.STATUS %in% input$checkEmployment) %>%
             mutate(time.spent.in.jail = as.numeric(difftime(Release.Date.Time, Booking.Date.Time, units = ifelse(input$switch, "hours", "days")))) %>%
-            select(RACE, SEX, MARITIAL.STATUS, EMPLOYMENT.STATUS, time.spent.in.jail)
+            select(RACE, SEX, MARITIAL.STATUS, EMPLOYMENT.STATUS, time.spent.in.jail) %>%
+            arrange(time.spent.in.jail)
+        dat = head(dat, input$sliderPercentage/100*nrow(dat))
         
         ggplot(data = dat) +
             geom_histogram(aes(x = time.spent.in.jail), color = "lightblue", fill = "lightblue", binwidth = 5) +
@@ -83,13 +88,15 @@ server <- function(input, output) {
     })
     
     output$SampleSize <- renderTable({
-        dat <- ccso_bookings %>% 
+        dat = ccso_bookings %>% 
             filter(RACE %in% input$checkRace) %>%
             filter(MARITIAL.STATUS %in% input$checkMarital) %>%
             filter(SEX %in% input$checkSex) %>%
             filter(EMPLOYMENT.STATUS %in% input$checkEmployment) %>%
             mutate(time.spent.in.jail = as.numeric(difftime(Release.Date.Time, Booking.Date.Time, units = ifelse(input$switch, "hours", "days")))) %>%
-            select(RACE, SEX, MARITIAL.STATUS, EMPLOYMENT.STATUS, time.spent.in.jail)
+            select(RACE, SEX, MARITIAL.STATUS, EMPLOYMENT.STATUS, time.spent.in.jail) %>%
+            arrange(time.spent.in.jail)
+        dat = head(dat, input$sliderPercentage/100*nrow(dat))
         
         data.frame("Sample" = nrow(dat), "Average" = mean(dat$time.spent.in.jail))})
     
