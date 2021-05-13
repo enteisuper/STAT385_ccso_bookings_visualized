@@ -1,6 +1,5 @@
 ---
 title: "STAT 385 Final Project"
-author: ""
 date: "Due by 12:00 PM noon CST on 05/14/2021"
 output: html_document
 runtime: shiny
@@ -19,9 +18,7 @@ library(tidyverse)
 library(ggplot2)
 library(shiny)
 library(shinyWidgets)
-
 original <- read.csv("https://uofi.box.com/shared/static/9elozjsg99bgcb7gb546wlfr3r2gc9b7.csv")
-
 # Get our dataset ready for plotting
 ccso_bookings = original %>% 
     mutate(Booking.Date.Time = parse_datetime(Booking.Date.Time, format = "%m/%d/%y %H:%M:%S")) %>% 
@@ -60,11 +57,12 @@ ui <- fluidPage(
         # Show a plot of the generated distribution
         plotOutput("Plot"),
         
-        # Show the sample size 
-        uiOutput("SampleSize")
+        # Show some statistics
+        uiOutput("Statistics")
     )
 )
-# Define server logic required to draw a ggplot
+
+# Define server logic
 server <- function(input, output) {
     
     output$Plot <- renderPlot({
@@ -87,7 +85,7 @@ server <- function(input, output) {
         
     })
     
-    output$SampleSize <- renderTable({
+    output$Statistics <- renderTable({
         dat = ccso_bookings %>% 
             filter(RACE %in% input$checkRace) %>%
             filter(MARITIAL.STATUS %in% input$checkMarital) %>%
@@ -98,9 +96,10 @@ server <- function(input, output) {
             arrange(time.spent.in.jail)
         dat = head(dat, input$sliderPercentage/100*nrow(dat))
         
-        data.frame("Sample" = nrow(dat), "Average" = mean(dat$time.spent.in.jail), "Median" = median(dat$time.spent.in.jail), "Max Jailtime" = max(dat$time.spent.in.jail))})
+        data.frame("Sample" = nrow(dat), "Average" = mean(dat$time.spent.in.jail), "Median" = median(dat$time.spent.in.jail), "Max" = max(dat$time.spent.in.jail))})
     
 }
+
 # Run the app
-shinyApp(ui = ui, server = server,options = list(height = 700))
+shinyApp(ui = ui, server = server,options = list(height = 800))
 ```
