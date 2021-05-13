@@ -80,7 +80,6 @@ server <- function(input, output) {
             geom_histogram(aes(x = time.spent.in.jail), color = "lightblue", fill = "lightblue", binwidth = 1) +
             labs(x = "Time Spent in Jail (Default: Days)", caption = "Note: the default time spent in jail is in days but the switch on the left can alter the unit into hours") + 
             theme_minimal() +
-            xlim(c(0,200)) +
             theme(plot.caption = element_text(hjust = 0.5))
         
     })
