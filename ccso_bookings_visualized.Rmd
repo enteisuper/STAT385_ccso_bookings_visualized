@@ -46,7 +46,7 @@ ui <- fluidPage(
         h4("Employment"), choices = list("Employed - Full Time" = "Employed - Full Time", "Employed - Part Time" = "Employed - Part Time", "Laid Off" = "Laid Off", "Retired" = "Retired", "Self Employed" = "Self Employed", "Student" = "Student", "Unemployed" = "Unemployed")),
         
         sliderInput("sliderPercentage",
-        h4("Percentage of the sample"), min = 1, max = 100, value = 100), 
+        h4("Percentage of the Sample"), min = 1, max = 100, value = 100), 
         
         materialSwitch("switch", label = h4("Switch to Hours"), status = "info"),
         
